@@ -1,5 +1,6 @@
 #define ROCKS_CLAY_IMPLEMENTATION
 #include "rocks.h"
+#include "rocks_custom.h"
 #include "components/grid.h"
 #include <ctype.h>
 #include <stdio.h>
@@ -132,7 +133,11 @@ static void render_project_card(void* data) {
                 .childAlignment = { CLAY_ALIGN_X_CENTER, CLAY_ALIGN_Y_CENTER }
             },
             .backgroundColor = Clay_Hovered() ? theme.primary_hover : theme.primary,
-            .cornerRadius = CLAY_CORNER_RADIUS(8)
+            .cornerRadius = CLAY_CORNER_RADIUS(8),
+            .userData = Rocks_AllocateCustomData((RocksCustomData){
+                .cursorPointer = true,
+                .link = project->link
+            })
         }) {
             CLAY_TEXT(CLAY_STRING("Explore"), CLAY_TEXT_CONFIG({
                 .textColor = theme.secondary,
@@ -153,9 +158,10 @@ static Clay_RenderCommandArray app_update(Rocks* rocks, float dt) {
     CLAY({
         .layout = {
             .sizing = { CLAY_SIZING_GROW(0), CLAY_SIZING_GROW(0) },
-        .   childAlignment = { CLAY_ALIGN_X_CENTER, CLAY_ALIGN_Y_CENTER },
+            .childAlignment = { CLAY_ALIGN_X_CENTER, CLAY_ALIGN_Y_TOP },
+
             .layoutDirection = CLAY_TOP_TO_BOTTOM,
-            .padding = CLAY_PADDING_ALL(40)
+            .padding = CLAY_PADDING_ALL(40),
             
         },
         .scroll = { .vertical = true, .horizontal = false },
@@ -243,6 +249,7 @@ int main(void) {
         .gap = 30,
         .columns = 0,  // Auto-fit columns
         .padding = 20,
+        .extraHeight = 200, 
         .containerName = "GridContainer" 
     };
     
